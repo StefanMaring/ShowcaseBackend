@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 using System.Net;
+using Rest_API.Models;
 
-namespace Rest_API.Controllers {
+namespace Rest_API.Controllers
+{
 
     [EnableCors]
     [Route("api/[controller]")]

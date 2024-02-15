@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rest_API.Models;
 
-namespace Rest_API.Controllers {
+namespace Rest_API.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
     public class StudentsController : ControllerBase {

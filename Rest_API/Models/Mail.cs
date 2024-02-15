@@ -1,5 +1,7 @@
-﻿namespace Rest_API {
-    public class Mail {
+﻿namespace Rest_API.Models
+{
+    public class Mail
+    {
         public string surname { get; set; }
         public string lastname { get; set; }
         public string email { get; set; }

@@ -1,5 +1,7 @@
-﻿namespace Rest_API {
-    public class Student {
+﻿namespace Rest_API.Models
+{
+    public class Student
+    {
         public string Name { get; set; }
         public int Id { get; set; }
     }
