@@ -27,7 +27,17 @@ namespace Rest_API.Controllers
             }
 
             if(!FormValidation.ValidatePhoneNumber(mail.tel)) {
-                return BadRequest(new { message = $"Telefoonnummer mag alleen nummers bevatten!" });
+                return BadRequest(new { message = "Telefoonnummer mag alleen nummers bevatten!" });
+            }
+
+            if (!FormValidation.CheckStringLength(mail.subject, 200))
+            {
+                return BadRequest(new { message = "Het onderwerp mag niet langer dan 200 tekens zijn!" });
+            }
+
+            if (!FormValidation.CheckStringLength(mail.message, 600))
+            {
+                return BadRequest(new { message = "Het bericht mag niet langer dan 600 tekens zijn!" });
             }
 
             //Build up the email and send, returns a 200 OK

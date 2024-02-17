@@ -36,5 +36,17 @@ namespace Rest_API_ClassLibrary
             //Return the text that is placed in between the HTML tags
             return htmlDoc.DocumentNode.InnerText;
         }
+
+        public static bool CheckStringLength(string str, int length)
+        {
+            if (str.Length > length)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }
