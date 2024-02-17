@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 using System.Net;
 using Rest_API.Models;
+using Rest_API_ClassLibrary;
+using System.Diagnostics;
 
 namespace Rest_API.Controllers
 {
@@ -20,13 +22,22 @@ namespace Rest_API.Controllers
                 EnableSsl = true
             };
 
+            if(!FormValidation.ValidateEmail(mail.email)) {
+                return BadRequest(new { message = "Vul een geldig email adres in!" });
+            }
+
+            if(!FormValidation.ValidatePhoneNumber(mail.tel)) {
+                return BadRequest(new { message = $"Telefoonnummer mag alleen nummers bevatten!" });
+            }
+
+            //Build up the email and send, returns a 200 OK
             client.Send(
-                mail.email, 
+                FormValidation.StripHTML(mail.email), 
                 "stefan.maring@windesheim.nl", 
-                mail.subject, 
-                $"{"Voornaam: " + mail.surname + " " + "Achternaam: " + mail.lastname + " " + "Telefoonnummer: " + mail.tel + "\n" + "Bericht: " + "\n" + mail.message}"
+                FormValidation.StripHTML(mail.subject), 
+                $"{"Voornaam: " + FormValidation.StripHTML(mail.surname) + " " + "Achternaam: " + FormValidation.StripHTML(mail.lastname) + " " + "Telefoonnummer: " + FormValidation.StripHTML(mail.tel) + "\n" + "Bericht: " + "\n" + FormValidation.StripHTML(mail.message)}"
             );
-            return Ok("Mail send");
+            return Ok(new { message = "Email succesvol verzonden!" });
         }
     }
 }
