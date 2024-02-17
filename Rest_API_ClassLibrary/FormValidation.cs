@@ -13,16 +13,10 @@ namespace Rest_API_ClassLibrary
     {
         public static bool ValidateEmail(string email)
         {
-            try
-            {
-                //If the constructor for MailAdress succeeds, the email is valid
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
+            string emailRegexPattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$";
+            Regex re = new Regex(emailRegexPattern);
+
+            return re.IsMatch(email);
         }
 
         public static bool ValidatePhoneNumber(string phoneNumber)
