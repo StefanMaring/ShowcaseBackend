@@ -1,4 +1,10 @@
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Rest_API.Data;
+using Rest_API.Models;
+using Swashbuckle.AspNetCore.Filters;
+
 namespace Rest_API {
     public class Program {
         public static void Main(string[] args) {
@@ -22,7 +28,22 @@ namespace Rest_API {
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options => {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme() {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
+
+            builder.Services.AddDbContext<BlogContext>(options => 
+                                        options.UseSqlite(builder.Configuration.GetConnectionString("BlogContext")));
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentityApiEndpoints<User>()
+                .AddEntityFrameworkStores<BlogContext>();
 
             var app = builder.Build();
 
@@ -31,6 +52,8 @@ namespace Rest_API {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.MapIdentityApi<User>();
 
             app.UseHttpsRedirection();
             app.UseCors(MyAllowSpecificOrigins);
