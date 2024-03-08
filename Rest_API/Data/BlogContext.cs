@@ -7,5 +7,7 @@ namespace Rest_API.Data {
         public BlogContext(DbContextOptions<BlogContext> options) : base(options) { 
 
         }
+
+        public DbSet<BlogPost> Posts { get; set; }
     }
 }
