@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rest_API.Data;
 using Rest_API.Models;
@@ -10,6 +11,7 @@ namespace Rest_API.Controllers {
 
         private readonly BlogContext _blogContext;
 
+        [Authorize(Roles = UserRoles.Developer)]
         [HttpPost("CreatePost")]
         public async Task<IActionResult> Post([FromBody] BlogPost post) {
             if(ModelState.IsValid) {
@@ -21,6 +23,7 @@ namespace Rest_API.Controllers {
             }
         }
 
+        [Authorize(Roles = UserRoles.Developer)]
         [HttpPost("DeletePost")]
         public async Task<IActionResult> Delete([FromBody] BlogPost post) {
             if(ModelState.IsValid) {

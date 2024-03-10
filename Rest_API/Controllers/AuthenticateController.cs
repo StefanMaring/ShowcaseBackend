@@ -76,7 +76,7 @@ namespace Rest_API.Controllers
             //If user is found, return 500 with user already exists message
             if (userExists != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Gebruiker bestaat al!" });
             }
 
             //Make new user
@@ -93,12 +93,12 @@ namespace Rest_API.Controllers
             //If user creation fails, return 500 with message
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Er is een fout opgetreden, gebruiker niet geregistreerd!" });
             }
             else
             {
                 //If user creation works, return 200 OK
-                return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+                return Ok(new Response { Status = "Success", Message = "Gebruiker succesvol geregistreerd!" });
             }
         }
 
@@ -108,7 +108,7 @@ namespace Rest_API.Controllers
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Gebruiker bestaat al!" });
 
             IdentityUser user = new()
             {
@@ -120,7 +120,7 @@ namespace Rest_API.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Er is een fout opgetreden, gebruiker niet geregistreerd!" });
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Developer))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Developer));
@@ -138,7 +138,7 @@ namespace Rest_API.Controllers
                 await _userManager.AddToRoleAsync(user, UserRoles.Lezer);
             }
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            return Ok(new Response { Status = "Success", Message = "Gebruiker succesvol geregistreerd!" });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
