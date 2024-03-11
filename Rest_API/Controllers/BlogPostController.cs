@@ -64,7 +64,7 @@ namespace Rest_API.Controllers {
         }
 
         [HttpGet("GetPostByID")]
-        public async Task<IActionResult> GetPostByID([FromBody] int postID)
+        public async Task<IActionResult> GetPostByID([FromQuery] int postID)
         {
             var post = _blogContext.Posts.Where(p => p.Id == postID).FirstOrDefault();
 
