@@ -40,6 +40,7 @@ namespace Rest_API.Controllers {
             if(postToDelete != null)
             {
                 _blogContext.Posts.Remove(postToDelete);
+                await _blogContext.SaveChangesAsync();
                 return Ok(new Response {Status = "Success", Message = "Post succesvol verwijderd"});
             } else
             {

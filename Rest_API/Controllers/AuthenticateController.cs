@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -30,6 +31,10 @@ namespace Rest_API.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            if(!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
             //Find the user by name
             var user = await _userManager.FindByNameAsync(model.Username);
 
@@ -63,13 +68,17 @@ namespace Rest_API.Controllers
             }
 
             //If the authentication failed, return unauthorized
-            return Unauthorized();
+            return Unauthorized(new Response {Status = "Error", Message = "Login mislukt, er is een fout opgetreden"});
         }
 
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
             //Check if a user by the same name already exists
             var userExists = await _userManager.FindByNameAsync(model.Username);
 
@@ -139,6 +148,21 @@ namespace Rest_API.Controllers
             }
 
             return Ok(new Response { Status = "Success", Message = "Gebruiker succesvol geregistreerd!" });
+        }
+
+        [Authorize(Roles = UserRoles.Developer)]
+        [HttpGet("GetUserID/{username}")]
+        public async Task<IActionResult> GetUserID(string username) {
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user != null) {
+                return (Ok(user.Id));
+            }
+            else if (user == null) {
+                return NotFound();
+            } else {
+                return Unauthorized();
+            }
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
