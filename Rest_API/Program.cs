@@ -102,6 +102,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rest_API.Data;
+using Rest_API.Hubs;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
@@ -126,6 +127,9 @@ builder.Services.AddCors(options => {
 
 // For Entity Framework
 builder.Services.AddDbContext<BlogContext>(options => options.UseSqlite(configuration.GetConnectionString("BlogContext")));
+
+//For SignalR
+builder.Services.AddSignalR();
 
 // For Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -191,5 +195,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<Rest_API.Hubs.BlogHub>("/bloghub");
 
 app.Run();
