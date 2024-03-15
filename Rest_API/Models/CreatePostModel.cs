@@ -1,6 +1,5 @@
 ﻿namespace Rest_API.Models {
-    public class BlogPost {
-        public string Id { get; set; }
+    public class CreatePostModel {
         public string PostTitle { get; set; }
         public string PostDate { get; set; }
         public string PostAuthor { get; set; }

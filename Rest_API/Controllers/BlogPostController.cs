@@ -22,9 +22,16 @@ namespace Rest_API.Controllers {
 
         [Authorize(Roles = UserRoles.Developer)]
         [HttpPost("CreatePost")]
-        public async Task<IActionResult> Post([FromBody] BlogPost post) {
-            if(ModelState.IsValid) {
-                _blogContext.Posts.Add(post);
+        public async Task<IActionResult> Post([FromBody] CreatePostModel post) {
+            if (ModelState.IsValid) { 
+                var blogPost = new BlogPost{
+                    Id = Guid.NewGuid().ToString(),
+                    PostAuthor = post.PostAuthor,
+                    PostDate = post.PostDate,
+                    PostTitle = post.PostTitle,
+                    PostText = post.PostText
+                };
+                _blogContext.Posts.Add(blogPost);
                 await _blogContext.SaveChangesAsync();
                 return Ok(new Response {Status = "Success", Message = "Post succesvol aangemaakt"});
             } else {
@@ -34,8 +41,8 @@ namespace Rest_API.Controllers {
 
         [Authorize(Roles = UserRoles.Developer)]
         [HttpPost("DeletePost")]
-        public async Task<IActionResult> Delete([FromBody] int postID) {
-            var postToDelete = _blogContext.Posts.FirstOrDefault(p => p.Id == postID);
+        public async Task<IActionResult> Delete([FromBody] DeletePostModel post) {
+            var postToDelete = _blogContext.Posts.FirstOrDefault(p => p.Id == post.PostID);
 
             if(postToDelete != null)
             {
@@ -44,7 +51,7 @@ namespace Rest_API.Controllers {
                 return Ok(new Response {Status = "Success", Message = "Post succesvol verwijderd"});
             } else
             {
-                return NotFound(new Response {Status = "Not Found", Message = "Het artikel is niet verwijderd"});
+                return NotFound(new Response {Status = "Not Found", Message = "De post is niet verwijderd"});
             }
         }
 
@@ -65,7 +72,7 @@ namespace Rest_API.Controllers {
         }
 
         [HttpGet("GetPostByID")]
-        public async Task<IActionResult> GetPostByID([FromQuery] int postID)
+        public async Task<IActionResult> GetPostByID([FromQuery] string postID)
         {
             var post = _blogContext.Posts.Where(p => p.Id == postID).FirstOrDefault();
 
