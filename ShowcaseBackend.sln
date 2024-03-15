@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShowcaseBackend", "ShowcaseBackend\ShowcaseBackend.csproj", "{12162264-8A53-452E-8CC3-65374A5AE10E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowcaseBackend_ClassLibrary", "ShowcaseBackend_ClassLibrary\ShowcaseBackend_ClassLibrary.csproj", "{F4E43DED-AB89-4AA4-8D7B-36EDFBCA0D2B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12162264-8A53-452E-8CC3-65374A5AE10E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12162264-8A53-452E-8CC3-65374A5AE10E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12162264-8A53-452E-8CC3-65374A5AE10E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12162264-8A53-452E-8CC3-65374A5AE10E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4E43DED-AB89-4AA4-8D7B-36EDFBCA0D2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4E43DED-AB89-4AA4-8D7B-36EDFBCA0D2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4E43DED-AB89-4AA4-8D7B-36EDFBCA0D2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4E43DED-AB89-4AA4-8D7B-36EDFBCA0D2B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D8D982EA-75B7-4555-B63D-31778009E1F3}
+	EndGlobalSection
+EndGlobal

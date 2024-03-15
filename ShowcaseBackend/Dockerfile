@@ -9,17 +9,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Rest_API/Rest_API.csproj", "Rest_API/"]
-RUN dotnet restore "./Rest_API/./Rest_API.csproj"
+COPY ["ShowcaseBackend/ShowcaseBackend.csproj", "ShowcaseBackend/"]
+RUN dotnet restore "./ShowcaseBackend/ShowcaseBackend.csproj"
 COPY . .
-WORKDIR "/src/Rest_API"
-RUN dotnet build "./Rest_API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/ShowcaseBackend"
+RUN dotnet build "./ShowcaseBackend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Rest_API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ShowcaseBackend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Rest_API.dll"]
+ENTRYPOINT ["dotnet", "ShowcaseBackend.dll"]
