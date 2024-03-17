@@ -5,8 +5,8 @@ using Rest_API.Models;
 
 namespace Rest_API.Hubs {
 
-    [EnableCors]
-    public class BlogHub : Hub {
+    public class BlogHub : Hub
+    {
         private readonly BlogContext _blogContext;
 
         public BlogHub(BlogContext blogContext) {

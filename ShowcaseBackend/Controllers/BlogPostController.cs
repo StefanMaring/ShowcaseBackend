@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rest_API.Data;
+using Rest_API.Hubs;
 using Rest_API.Models;
 using Rest_API_ClassLibrary;
 
@@ -13,11 +14,13 @@ namespace Rest_API.Controllers {
 
         private readonly ILogger _logger;
         private readonly BlogContext _blogContext;
+        private readonly BlogHub _blogHub;
 
-        public BlogPostController(ILogger<BlogContext> logger, BlogContext blogContext)
+        public BlogPostController(ILogger<BlogContext> logger, BlogContext blogContext, BlogHub blogHub)
         {
             _logger = logger;
             _blogContext = blogContext;
+            _blogHub = blogHub;
         }
 
         [Authorize(Roles = UserRoles.Developer)]
@@ -33,6 +36,9 @@ namespace Rest_API.Controllers {
                 };
                 _blogContext.Posts.Add(blogPost);
                 await _blogContext.SaveChangesAsync();
+
+                await _blogHub.SendNewPost();
+
                 return Ok(new Response {Status = "Success", Message = "Post succesvol aangemaakt"});
             } else {
                 return BadRequest(new Response { Status = "Error", Message = "Er is een fout opgetreden, post niet aangemaakt" });
