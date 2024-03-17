@@ -8,17 +8,19 @@ namespace Rest_API.Hubs {
     public class BlogHub : Hub
     {
         private readonly BlogContext _blogContext;
+        protected IHubContext<BlogHub> _context;
 
-        public BlogHub(BlogContext blogContext) {
+        public BlogHub(BlogContext blogContext, IHubContext<BlogHub> context)
+        {
             _blogContext = blogContext;
+            _context = context;
         }
 
         public async Task SendNewPost() {
-            var newPostData = _blogContext.Posts
-                .FirstOrDefault();
+            var newPostData = _blogContext.Posts.Select(p => new {p.Id, p.PostTitle}).ToList().Last();
 
             if (newPostData != null) {
-                await Clients.All.SendAsync("ReceiveNewPost", new { newPost = newPostData });
+                await _context.Clients.All.SendAsync("ReceiveNewPost", new { post = newPostData });
             }
         }
     }
