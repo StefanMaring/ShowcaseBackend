@@ -65,7 +65,7 @@ namespace Rest_API.Controllers {
         public async Task<IActionResult> GetAllPosts()
         {
             var blogPosts = _blogContext.Posts
-                .Select(p => new { p.Id, p.PostTitle})
+                .Select(p => new {p.Id, p.PostTitle})
                 .ToListAsync();
 
             if (blogPosts != null)
