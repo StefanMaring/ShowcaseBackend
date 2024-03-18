@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Rest_API.Models;
+using ShowcaseBackend.Models;
 
 namespace Rest_API.Data {
     public class BlogContext : IdentityDbContext<IdentityUser>
@@ -16,5 +17,6 @@ namespace Rest_API.Data {
         }
 
         public DbSet<BlogPost> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }
