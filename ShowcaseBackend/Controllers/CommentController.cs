@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Rest_API.Data;
 using Rest_API.Hubs;
@@ -26,23 +27,40 @@ namespace ShowcaseBackend.Controllers {
         [Authorize]
         [HttpPost("CreateComment")]
         public async Task<IActionResult> Post([FromBody] CreateCommentModel comment) {
+            FormValidation.StripHTML(comment.CommentUser);
+            FormValidation.StripHTML(comment.CommentText);
+
             if (ModelState.IsValid) {
                 var newComment = new Comment {
                     CommentId = Guid.NewGuid().ToString(),
                     CommentUser = comment.CommentUser,
-                    CommentDate = comment.CommentDate,
                     CommentText = comment.CommentText,
                     BlogPostID = comment.BlogPostID,
                 };
                 _blogContext.Comments.Add(newComment);
                 await _blogContext.SaveChangesAsync();
 
-                //await _blogHub.SendNewPost();
+                await _blogHub.SendNewComment();
 
                 return Ok(new Response { Status = "Success", Message = "Comment succesvol gepost" });
             }
             else {
                 return BadRequest(new Response { Status = "Error", Message = "Er is een fout opgetreden, comment niet gepost" });
+            }
+        }
+
+        [HttpGet("GetCommentsByBlogID/{blogID}")]
+        public async Task<IActionResult> GetCommentsByBlogID(string blogID) {
+            var commentsPerPost = _blogContext.Comments
+                .Where(c => c.BlogPostID == blogID)
+                .Select(c => new { c.CommentId, c.CommentUser, c.CommentText })
+                .ToListAsync();
+
+            if (commentsPerPost != null) {
+                return Ok(commentsPerPost);
+            }
+            else {
+                return NotFound(new Response { Status = "Not Found", Message = "Er zijn geen comments gevonden" });
             }
         }
     }

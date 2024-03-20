@@ -23,5 +23,13 @@ namespace Rest_API.Hubs {
                 await _context.Clients.All.SendAsync("ReceiveNewPost", new { post = newPostData });
             }
         }
+
+        public async Task SendNewComment() {
+            var newCommentData = _blogContext.Comments.Select(c => new { c.CommentId, c.CommentUser, c.CommentText }).ToList().Last();
+
+            if (newCommentData != null) {
+                await _context.Clients.All.SendAsync("ReceiveNewComment", new { comment = newCommentData });
+            }
+        }
     }
 }

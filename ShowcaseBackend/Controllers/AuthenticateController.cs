@@ -35,23 +35,18 @@ namespace Rest_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            //Find the user by name
             var user = await _userManager.FindByNameAsync(model.Username);
 
-            //Check if the user is not null and if the password is correct
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                //Get the roles of the user
                 var userRoles = await _userManager.GetRolesAsync(user);
 
-                //Set the claims for the user
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-                //Add the roles to the claims
                 foreach (var userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
@@ -59,7 +54,6 @@ namespace Rest_API.Controllers
 
                 var token = GetToken(authClaims);
 
-                //Return the JWT token
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -67,7 +61,6 @@ namespace Rest_API.Controllers
                 });
             }
 
-            //If the authentication failed, return unauthorized
             return Unauthorized(new Response {Status = "Error", Message = "Login mislukt, er is een fout opgetreden"});
         }
 
@@ -79,16 +72,13 @@ namespace Rest_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            //Check if a user by the same name already exists
             var userExists = await _userManager.FindByNameAsync(model.Username);
 
-            //If user is found, return 500 with user already exists message
             if (userExists != null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Gebruiker bestaat al!" });
             }
 
-            //Make new user
             IdentityUser user = new()
             {
                 Email = model.Email,
@@ -96,17 +86,14 @@ namespace Rest_API.Controllers
                 UserName = model.Username
             };
 
-            //Create the user
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            //If user creation fails, return 500 with message
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Er is een fout opgetreden, gebruiker niet geregistreerd!" });
             }
             else
             {
-                //If user creation works, return 200 OK
                 return Ok(new Response { Status = "Success", Message = "Gebruiker succesvol geregistreerd!" });
             }
         }
