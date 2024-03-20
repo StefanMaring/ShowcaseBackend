@@ -63,5 +63,19 @@ namespace ShowcaseBackend.Controllers {
                 return NotFound(new Response { Status = "Not Found", Message = "Er zijn geen comments gevonden" });
             }
         }
+
+        [HttpPost("DeleteComment")]
+        public async Task<IActionResult> Delete([FromBody] DeleteCommentModel comment) {
+            var commentToDelete = _blogContext.Comments.FirstOrDefault(c => c.CommentId == comment.CommentId);
+
+            if (commentToDelete != null) {
+                _blogContext.Comments.Remove(commentToDelete);
+                await _blogContext.SaveChangesAsync();
+                return Ok(new Response { Status = "Success", Message = "Comment succesvol verwijderd" });
+            }
+            else {
+                return NotFound(new Response { Status = "Not Found", Message = "De Comment is niet verwijderd" });
+            }
+        }
     }
 }
