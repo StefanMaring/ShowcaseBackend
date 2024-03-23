@@ -24,6 +24,11 @@ namespace Rest_API.Hubs {
             }
         }
 
+        public async Task OnDeletePost(string postID)
+        {
+            await _context.Clients.All.SendAsync("ReceiveDeletePost", new { postToHide = postID });
+        }
+
         public async Task SendNewComment() {
             var newCommentData = _blogContext.Comments.Select(c => new { c.CommentId, c.CommentUser, c.CommentText }).ToList().Last();
 

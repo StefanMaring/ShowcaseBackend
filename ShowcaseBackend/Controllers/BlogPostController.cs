@@ -54,6 +54,9 @@ namespace Rest_API.Controllers {
             {
                 _blogContext.Posts.Remove(postToDelete);
                 await _blogContext.SaveChangesAsync();
+
+                await _blogHub.OnDeletePost(post.PostID);
+
                 return Ok(new Response {Status = "Success", Message = "Post succesvol verwijderd"});
             } else
             {
