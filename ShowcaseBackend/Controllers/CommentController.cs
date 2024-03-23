@@ -71,6 +71,9 @@ namespace ShowcaseBackend.Controllers {
             if (commentToDelete != null) {
                 _blogContext.Comments.Remove(commentToDelete);
                 await _blogContext.SaveChangesAsync();
+
+                await _blogHub.OnDeleteComment(comment.CommentId);
+
                 return Ok(new Response { Status = "Success", Message = "Comment succesvol verwijderd" });
             }
             else {

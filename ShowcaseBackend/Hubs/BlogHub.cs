@@ -36,5 +36,10 @@ namespace Rest_API.Hubs {
                 await _context.Clients.All.SendAsync("ReceiveNewComment", new { comment = newCommentData });
             }
         }
+
+        public async Task OnDeleteComment(string commentID)
+        {
+            await _context.Clients.All.SendAsync("ReceiveDeleteComment", new { commentToHide = commentID });
+        }
     }
 }
