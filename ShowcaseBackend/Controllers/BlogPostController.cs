@@ -32,7 +32,7 @@ namespace Rest_API.Controllers {
                     PostAuthor = post.PostAuthor,
                     PostDate = post.PostDate,
                     PostTitle = post.PostTitle,
-                    PostText = post.PostText
+                    PostText = FormValidation.SanitizeHtml(post.PostText),
                 };
                 _blogContext.Posts.Add(blogPost);
                 await _blogContext.SaveChangesAsync();

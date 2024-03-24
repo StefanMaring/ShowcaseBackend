@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using Ganss.Xss;
+using HtmlAgilityPack;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace Rest_API_ClassLibrary
             return re.IsMatch(phoneNumber);
         }
 
+        //For escaping all HTML and special characters
         public static string StripHTML(string str)
         {
             //Load the HTML into a document
@@ -49,5 +51,26 @@ namespace Rest_API_ClassLibrary
                 return true;
             }
         }
+
+        //For sanitizing HTML specifically for blog posts
+        public static string SanitizeHtml(string html)
+        {
+            var sanitizer = new HtmlSanitizer();
+
+            sanitizer.AllowedTags.Add("h3");
+            sanitizer.AllowedTags.Add("h4");
+            sanitizer.AllowedTags.Add("h5");
+            sanitizer.AllowedTags.Add("h6");
+            sanitizer.AllowedTags.Add("p");
+            sanitizer.AllowedTags.Add("i");
+            sanitizer.AllowedTags.Add("blockquote");
+            sanitizer.AllowedTags.Add("strong");
+            sanitizer.AllowedTags.Add("ol");
+            sanitizer.AllowedTags.Add("ul");
+            sanitizer.AllowedTags.Add("li");
+
+            return sanitizer.Sanitize(html);
+        }
+
     }
 }
