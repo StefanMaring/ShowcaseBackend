@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AngleSharp.Dom;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,9 +7,11 @@ using Microsoft.IdentityModel.Tokens;
 using Rest_API.Data;
 using Rest_API.Models;
 using Rest_API_ClassLibrary;
+using ShowcaseBackend.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using TwoFactorAuthNet;
 
 namespace Rest_API.Controllers
 {
@@ -16,11 +19,11 @@ namespace Rest_API.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticateController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthenticateController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -31,6 +34,8 @@ namespace Rest_API.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            TwoFactorAuth tfa = new TwoFactorAuth();
+
             if(!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
@@ -39,6 +44,10 @@ namespace Rest_API.Controllers
 
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
+                if(!tfa.VerifyCode(user.TwoFactorSecret, model.TwoFactorCode)) {
+                    return Unauthorized(new Response { Status = "Error", Message = "2FA mislukt, er is een fout opgetreden" });
+                }
+
                 var userRoles = await _userManager.GetRolesAsync(user);
 
                 var authClaims = new List<Claim>
@@ -68,6 +77,8 @@ namespace Rest_API.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            var secret = GenerateUser2FASecret();
+
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
@@ -79,11 +90,12 @@ namespace Rest_API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Gebruiker bestaat al!" });
             }
 
-            IdentityUser user = new()
+            AppUser user = new()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
+                TwoFactorSecret = secret
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -94,7 +106,7 @@ namespace Rest_API.Controllers
             }
             else
             {
-                return Ok(new Response { Status = "Success", Message = "Gebruiker succesvol geregistreerd!" });
+                return Ok(new { Status = "Success", Message = "Gebruiker succesvol geregistreerd!", TwoFactorSecret = secret });
             }
         }
 
@@ -102,15 +114,22 @@ namespace Rest_API.Controllers
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
+            var secret = GenerateUser2FASecret();
+
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Gebruiker bestaat al!" });
 
-            IdentityUser user = new()
+            AppUser user = new()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
+                TwoFactorSecret = secret
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -134,7 +153,7 @@ namespace Rest_API.Controllers
                 await _userManager.AddToRoleAsync(user, UserRoles.Lezer);
             }
 
-            return Ok(new Response { Status = "Success", Message = "Gebruiker succesvol geregistreerd!" });
+            return Ok(new { Status = "Success", Message = "Gebruiker succesvol geregistreerd!", TwoFactorSecret = secret });
         }
 
         [Authorize(Roles = UserRoles.Developer)]
@@ -165,6 +184,12 @@ namespace Rest_API.Controllers
                 );
 
             return token;
+        }
+
+        private string GenerateUser2FASecret() {
+            var tfa = new TwoFactorAuth("StefanMaringBlog");
+            var secret = tfa.CreateSecret(160);
+            return secret;
         }
     }
 }

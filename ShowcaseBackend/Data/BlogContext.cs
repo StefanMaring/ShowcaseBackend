@@ -5,7 +5,7 @@ using Rest_API.Models;
 using ShowcaseBackend.Models;
 
 namespace Rest_API.Data {
-    public class BlogContext : IdentityDbContext<IdentityUser>
+    public class BlogContext : IdentityDbContext<AppUser>
     {
         public BlogContext(DbContextOptions<BlogContext> options) : base(options) { 
 
@@ -18,5 +18,6 @@ namespace Rest_API.Data {
 
         public DbSet<BlogPost> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<AppUser> Users {  get; set; }
     }
 }

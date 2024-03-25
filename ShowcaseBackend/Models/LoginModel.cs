@@ -12,5 +12,8 @@ namespace Rest_API.Models
         [MaxLength(50)]
         [MinLength(12)]
         public string? Password { get; set; }
+
+        [Required(ErrorMessage = "2FA code is required")]
+        public string? TwoFactorCode { get; set; }
     }
 }

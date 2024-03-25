@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rest_API.Data;
 using Rest_API.Hubs;
+using ShowcaseBackend.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
@@ -40,7 +41,7 @@ builder.Services.AddSignalR();
 builder.Services.AddTransient<BlogHub>();
 
 // For Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<BlogContext>()
     .AddDefaultTokenProviders();
 
