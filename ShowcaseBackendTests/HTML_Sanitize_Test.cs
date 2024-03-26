@@ -23,5 +23,15 @@ namespace ShowcaseBackendTests {
             Assert.IsTrue(sanitizedHtmlWithAllowedTags.Contains("<h3>"));
             Assert.IsTrue(sanitizedHtmlWithAllowedTags.Contains("<p>"));
         }
+
+        [Test]
+        public void testHTMLStripSanitization() {
+            string htmlString = "<p>Test <strong>test</strong> test <em>test</em> test.</p><script>alert('hallo');</script><p> Hallo Wereld</p>";
+            string expectedText = "Test test test test test. Hallo Wereld";
+
+            string strippedText = FormValidation.StripHTML(htmlString);
+
+            Assert.AreEqual(expectedText, strippedText);
+        }
     }
 }
