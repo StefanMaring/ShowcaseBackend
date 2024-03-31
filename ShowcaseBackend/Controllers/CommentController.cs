@@ -27,14 +27,11 @@ namespace ShowcaseBackend.Controllers {
         [Authorize]
         [HttpPost("CreateComment")]
         public async Task<IActionResult> Post([FromBody] CreateCommentModel comment) {
-            FormValidation.StripHTML(comment.CommentUser);
-            FormValidation.StripHTML(comment.CommentText);
-
             if (ModelState.IsValid) {
                 var newComment = new Comment {
                     CommentId = Guid.NewGuid().ToString(),
-                    CommentUser = comment.CommentUser,
-                    CommentText = comment.CommentText,
+                    CommentUser = FormValidation.StripHTML(comment.CommentUser),
+                    CommentText = FormValidation.StripHTML(comment.CommentText),
                     BlogPostID = comment.BlogPostID,
                 };
                 _blogContext.Comments.Add(newComment);
